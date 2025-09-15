@@ -1,15 +1,8 @@
 #!/bin/bash
 
-# Display reset script
-echo "=== RESETTING DISPLAYS ==="
+echo "=== EMERGENCY DISPLAY RESET ==="
+echo "Running xrandr --auto to stabilize all displays..."
 
-# STEP 1: Auto-detect all displays
-echo "Step 1: Auto-detecting displays..."
 xrandr --auto
-sleep 2
-
-# STEP 2: Check what's connected
-echo "Step 2: Current connections:"
-xrandr | grep " connected"
 
 echo "=== RESET COMPLETE ==="
