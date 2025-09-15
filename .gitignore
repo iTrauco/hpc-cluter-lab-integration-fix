@@ -1,0 +1,38 @@
+# Temporary files
+*.swp
+*.swo
+*~
+*.tmp
+*.bak
+
+# Log files
+*.log
+logs/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+
+# Backup files
+*.backup
+*.old
+
+# Personal notes (if any)
+personal_notes.txt
+TODO.txt
+
+# Compiled files
+*.pyc
+*.o
+*.so
+
+# Hidden files except gitignore
+.*
+!.gitignore
+
+
+*artifacts*
