@@ -171,3 +171,51 @@ xbindkeys
 ### Files
 - `/etc/X11/xorg.conf` - Contains 30Hz hard limit
 - `xbindkeys` - Installed at /usr/bin/xbindkeys
+EOF'
+
+# Restart display manager to apply
+
+
+```bash
+
+# 1. Create X11 config that overrides everything
+sudo tee /etc/X11/xorg.conf.d/99-force-30hz-lock.conf << EOF
+Section "Monitor"
+    Identifier "DP-6"
+    Option "DPMS" "false"
+    Modeline "3840x2160_30" 297.00 3840 4016 4104 4400 2160 2168 2178 2250 +hsync +vsync
+    Option "PreferredMode" "3840x2160_30"
+EndSection
+
+Section "Device"
+    Identifier "nvidia"
+    Driver "nvidia"
+    Option "ModeValidation" "NoMaxPClkCheck"
+    Option "ExactModeTimingsDVI" "true"
+EndSection
+EOF
+
+# 2. Create watchdog service that enforces 30Hz
+sudo tee /etc/systemd/system/force-30hz.service << EOF
+[Unit]
+Description=Force 30Hz refresh rate
+After=graphical.target
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -c 'while true; do xrandr --output DP-6 --rate 29.97 2>/dev/null; sleep 5; done'
+Restart=always
+Environment=DISPLAY=:0
+
+[Install]
+WantedBy=graphical.target
+EOF
+
+sudo systemctl enable force-30hz.service
+sudo systemctl start force-30hz.service
+
+# 3. Lock nvidia-settings from saving configs
+sudo chattr +i /etc/X11/xorg.conf 2>/dev/null
+touch ~/.nvidia-settings-rc
+sudo chattr +i ~/.nvidia-settings-rc
+```
